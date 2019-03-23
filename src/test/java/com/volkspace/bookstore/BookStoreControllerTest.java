@@ -1,6 +1,8 @@
 package com.volkspace.bookstore;
 
+import com.volkspace.bookstore.sync.BookStoreSynchronizer;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,14 @@ public class BookStoreControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
+
+	@Autowired
+	private BookStoreSynchronizer bookStoreSynchronizer;
+
+	@Before
+	public void setUp() throws Exception {
+		bookStoreSynchronizer.forceSync();
+	}
 
 	@Test
 	public void getBooksWithRestApi() throws Exception {

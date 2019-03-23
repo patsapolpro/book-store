@@ -8,15 +8,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class BookStoreController {
 
     @Autowired
-    @Qualifier("bookStoreService")
+    @Qualifier("databaseBookStoreService")
     private BookStoreService bookStoreService;
 
     @GetMapping("/books")
