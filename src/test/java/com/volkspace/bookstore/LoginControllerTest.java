@@ -30,7 +30,7 @@ public class LoginControllerTest {
         multiValueMapUser.add("date_of_birth", "15/01/1985");
         mvc.perform(delete("/users"))
                 .andDo(
-                    result ->       mvc.perform(post("/users").params(multiValueMapUser))
+                    result -> mvc.perform(post("/users").params(multiValueMapUser))
                 );
     }
 

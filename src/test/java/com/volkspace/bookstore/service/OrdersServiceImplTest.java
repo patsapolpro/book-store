@@ -1,8 +1,8 @@
 package com.volkspace.bookstore.service;
 
 import com.volkspace.bookstore.model.Orders;
-import com.volkspace.bookstore.model.Users;
 import com.volkspace.bookstore.service.impl.OrdersServiceImpl;
+import com.volkspace.bookstore.service.impl.UsersServiceImpl;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -22,8 +21,12 @@ public class OrdersServiceImplTest {
     @Autowired
     private OrdersServiceImpl ordersService;
 
+    @Autowired
+    private UsersServiceImpl usersService;
+
     @Before
     public void setUp() throws Exception {
+        usersService.deleteAll();
         ordersService.deleteAll();
 
         Orders orders = new Orders();

@@ -2,6 +2,7 @@ package com.volkspace.bookstore;
 
 import com.google.gson.Gson;
 import com.volkspace.bookstore.model.Book;
+import com.volkspace.bookstore.model.Orders;
 import com.volkspace.bookstore.model.Users;
 import com.volkspace.bookstore.service.BookStoreService;
 import com.volkspace.bookstore.service.UsersService;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +80,20 @@ public class UsersControllerTest {
 
     @Test
     public void testGetUsersWithRestApi() throws Exception {
+        List<Users> usersList = usersService.findAll();
         Map<String, Object> sessionAttrs = new HashMap<>();
-        sessionAttrs.put("userlogin", 1);
+        sessionAttrs.put("userlogin", usersList.get(0).getId());
+
+        List<Integer> bookIdList = new ArrayList<>();
+        for (Orders orders: usersList.get(0).getOrders()) {
+            bookIdList.add(orders.getBookId());
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", usersList.get(0).getName());
+        map.put("surname", usersList.get(0).getSurname());
+        map.put("date_of_birth", usersList.get(0).getDateOfBirthDay());
+        map.put("books", bookIdList);
 
         MultiValueMap<String, String> multiValueMapLogin = new LinkedMultiValueMap<>();
         multiValueMapLogin.add("username", "john.doe");
@@ -89,6 +103,7 @@ public class UsersControllerTest {
                 .andDo(
                     result ->   mvc.perform(get("/users").sessionAttrs(sessionAttrs))
                                         .andExpect(status().isOk())
+                                        .andExpect(content().string(new Gson().toJson(map)))
                 );
     }
 
