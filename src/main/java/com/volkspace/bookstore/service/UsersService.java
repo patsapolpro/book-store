@@ -14,4 +14,8 @@ public interface UsersService {
     void deleteAll();
 
     Users findById(Integer id);
+
+    void deleteById(Integer userId);
+
+    Users findByUsername(String username);
 }

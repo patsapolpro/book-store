@@ -1,26 +1,24 @@
 Bookstore RESTful API
 ===
 
-    Develop a RESTful API for a	bookstore that allows a	user to	login, perform user	related	tasks, view	a list of books
-and	place book orders.
-    You	should develop the API using Java Spring Boot and commit your work,	setup instructions and any cURL scripts	to
-a remote git repository	(github, gitlab, bitbucket,	etc).
-    We	expect	that you demonstrate the following in your solution:
-        • applied SOLID	principles
-        • error	and	exception handling
-        • security
-        • database design
-        • atomic commits to	repository
-    You	will have our extra attention if you also provide the following:
-        • unit	tests
-        • performance optimization
-        • sequence	diagrams
-        • API	documentation	(Swagger/RAML)
-    Should there be any missing requirements in	this document, you	may	exercise your own discretion.
+    #### Develop a RESTful API for a	bookstore that allows a	user to	login, perform user	related	tasks, view	a list of books and	place book orders.
+    #### You should develop the API using Java Spring Boot and commit your work, setup instructions and any cURL scripts to a remote git repository	(github, gitlab, bitbucket,	etc).
+    #### We	expect	that you demonstrate the following in your solution:
+        * applied SOLID	principles
+        * error	and	exception handling
+        * security
+        * database design
+        * atomic commits to	repository
+    #### You will have our extra attention if you also provide the following:
+        * unit	tests
+        * performance optimization
+        * sequence	diagrams
+        * API	documentation	(Swagger/RAML)
+    #### Should there be any missing requirements in	this document, you	may	exercise your own discretion.
 
-    Below are the APIs that	you	would need to implement:
+    #### Below are the APIs that	you	would need to implement:
 
-    Book Store API
+    ## Book Store API
 
     #### POST /login
     This is	the	user login authentication API. The request and response	should be over a secured communication

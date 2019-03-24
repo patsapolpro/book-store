@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,11 +37,12 @@ public class UsersController {
 
     @ApiOperation(value = "Create Users", notes = "Create Users By Username and Password")
     @PostMapping("/users")
-    public String createUsers(@ApiParam(value = "username", required = true) @RequestParam String username,
+    public ResponseEntity<?> createUsers(@ApiParam(value = "username", required = true) @RequestParam String username,
                               @ApiParam(value = "password", required = true) @RequestParam String password,
                               @ApiParam(value = "dateOfBirth") @RequestParam("date_of_birth") String dateOfBirth) {
-        String result;
-        try {
+        Users userExist = usersService.findByUsername(username);
+        //check non-create username repeat
+        if(userExist == null) {
             String passwordHex = DigestUtils.sha256Hex(password);
             String[] nameSplit = username.split("\\.");
 
@@ -51,11 +53,10 @@ public class UsersController {
             users.setSurname(nameSplit[1] != null ? nameSplit[1] : "");
             users.setDateOfBirthDay(dateOfBirth != null ? BookStoreUtil.parseDate(dateOfBirth) : null);
             usersService.save(users);
-            result = BookStoreUtil.MESSAGE_SUCCESS;
-        } catch (Exception e) {
-            result = BookStoreUtil.MESSAGE_FAIL;
+            return ResponseEntity.ok().build();
+        } else {
+            return  ResponseEntity.badRequest().build();
         }
-        return result;
     }
 
     @ApiOperation(value = "Get Users", notes = "Get Users store in session")
@@ -81,10 +82,16 @@ public class UsersController {
 
     @ApiOperation(value = "Delete Users", notes = "Delete all Users")
     @DeleteMapping("/users")
-    public void deleteUsers(HttpServletRequest request) {
-        usersService.deleteAll();
-        ordersService.deleteAll();
-        request.getSession().removeAttribute(BookStoreUtil.SESSION_USER_ID);
+    public ResponseEntity<?> deleteUsers(HttpServletRequest request) {
+        Integer userLogin = (Integer) request.getSession().getAttribute(BookStoreUtil.SESSION_USER_ID);
+        if(userLogin != null){
+            Users users = usersService.findById(userLogin);
+            usersService.deleteById(userLogin);
+            ordersService.deleteByUsers(users);
+            request.getSession().removeAttribute(BookStoreUtil.SESSION_USER_ID);
+            return  ResponseEntity.ok().build();
+        }
+        return  ResponseEntity.notFound().build();
     }
 
     @ApiOperation(value = "Create Order By Users", notes = "Orders book by Users")

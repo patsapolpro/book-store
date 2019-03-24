@@ -1,5 +1,7 @@
 package com.volkspace.bookstore;
 
+import com.volkspace.bookstore.service.OrdersService;
+import com.volkspace.bookstore.service.UsersService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,8 +24,17 @@ public class LoginControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private UsersService usersService;
+
+    @Autowired
+    private OrdersService ordersService;
+
     @Before
     public void setUp() throws Exception {
+        usersService.deleteAll();
+        ordersService.deleteAll();
+
         MultiValueMap<String, String> multiValueMapUser = new LinkedMultiValueMap<>();
         multiValueMapUser.add("username", "john.doe");
         multiValueMapUser.add("password", "thisismysecret");
@@ -46,7 +57,16 @@ public class LoginControllerTest {
     @Test
     public void loginWithRestApiWithOutExistUsers() throws Exception {
         MultiValueMap<String, String> multiValueMapLogin = new LinkedMultiValueMap<>();
-        multiValueMapLogin.add("username", "john.doe2");
+        multiValueMapLogin.add("username", "john.doe");
+        multiValueMapLogin.add("password", "thisismysecret2");
+        mvc.perform(post("/login").params(multiValueMapLogin))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void loginWithRestApiWithOutExistUsersButInvalidPassword() throws Exception {
+        MultiValueMap<String, String> multiValueMapLogin = new LinkedMultiValueMap<>();
+        multiValueMapLogin.add("username", "john.doe");
         multiValueMapLogin.add("password", "thisismysecret2");
         mvc.perform(post("/login").params(multiValueMapLogin))
                 .andExpect(status().isNotFound());

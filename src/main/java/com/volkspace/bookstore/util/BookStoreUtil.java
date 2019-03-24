@@ -13,6 +13,7 @@ public class BookStoreUtil {
 
     public static final String MESSAGE_SUCCESS = "SUCCESS";
     public static final String MESSAGE_FAIL = "FAIL";
+    public static final String MESSAGE_DATA_DUPLICATE = "DATA_DUPLICATE";
 
     public static Date parseDate(String dateStr) {
         Date date = null;

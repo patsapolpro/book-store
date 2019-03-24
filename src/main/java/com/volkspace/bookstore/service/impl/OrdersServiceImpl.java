@@ -1,6 +1,7 @@
 package com.volkspace.bookstore.service.impl;
 
 import com.volkspace.bookstore.model.Orders;
+import com.volkspace.bookstore.model.Users;
 import com.volkspace.bookstore.repository.OrdersRepository;
 import com.volkspace.bookstore.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,10 @@ public class OrdersServiceImpl implements OrdersService {
     @Override
     public void deleteAll() {
         ordersRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteByUsers(Users users) {
+        ordersRepository.deleteByUsers(users);
     }
 }

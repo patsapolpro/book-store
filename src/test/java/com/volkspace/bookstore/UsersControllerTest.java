@@ -1,13 +1,16 @@
 package com.volkspace.bookstore;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import com.google.gson.Gson;
 import com.volkspace.bookstore.model.Book;
 import com.volkspace.bookstore.model.Orders;
 import com.volkspace.bookstore.model.Users;
 import com.volkspace.bookstore.service.BookStoreService;
+import com.volkspace.bookstore.service.OrdersService;
 import com.volkspace.bookstore.service.UsersService;
 import com.volkspace.bookstore.sync.BookStoreSynchronizer;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +47,9 @@ public class UsersControllerTest {
     private UsersService usersService;
 
     @Autowired
+    private OrdersService ordersService;
+
+    @Autowired
     @Qualifier("databaseBookStoreService")
     private BookStoreService bookStoreService;
 
@@ -51,6 +57,9 @@ public class UsersControllerTest {
     public void setUp() throws Exception {
         bookStoreSynchronizer.forceDelete();
         bookStoreSynchronizer.forceSync();
+
+        usersService.deleteAll();
+        ordersService.deleteAll();
 
         MultiValueMap<String, String> multiValueMapUser = new LinkedMultiValueMap<>();
         multiValueMapUser.add("username", "john.doe");
@@ -69,13 +78,35 @@ public class UsersControllerTest {
         multiValueMapUser.add("password", "thisismysecret2");
         multiValueMapUser.add("date_of_birth", "15/01/1985");
         mvc.perform(post("/users").params(multiValueMapUser))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()); //username ซ้ำ
+    }
+
+    @Test
+    public void testCreateUsersDuplicateWithRestApi() throws Exception {
+        MultiValueMap<String, String> multiValueMapUser = new LinkedMultiValueMap<>();
+        multiValueMapUser.add("username", "john.doe");
+        multiValueMapUser.add("password", "thisismysecret");
+        multiValueMapUser.add("date_of_birth", "15/01/1985");
+        mvc.perform(post("/users").params(multiValueMapUser))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testDeleteUsersWithRestApi() throws Exception {
+        List<Users> usersList = usersService.findAll();
+        Map<String, Object> sessionAttrs = new HashMap<>();
+        sessionAttrs.put("userlogin", usersList.get(0).getId());
+        mvc.perform(delete("/users").sessionAttrs(sessionAttrs))
+                .andExpect(status().isOk());
+
+        usersList = usersService.findAll();
+        Assert.assertThat(usersList.size(), Matchers.equalTo(0));
+    }
+
+    @Test
+    public void testDeleteUsersNonExistWithRestApi() throws Exception {
         mvc.perform(delete("/users"))
-            .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -130,6 +161,31 @@ public class UsersControllerTest {
                         result ->  mvc.perform(post("/users/orders").params(multiValueMapOrders).sessionAttrs(sessionAttrs))
                                         .andExpect(status().isOk())
                                         .andExpect(content().string(Matchers.equalTo(new Gson().toJson(map))))
+                );
+    }
+
+    @Test
+    public void testOrdersNonExistByUserWithRestApi() throws Exception {
+        List<Users> usersList = usersService.findAll();
+        Map<String, Object> sessionAttrs = new HashMap<>();
+        sessionAttrs.put("userlogin", usersList.get(0).getId());
+
+        Map<String, Double> map = new HashMap<>();
+        map.put("price", 0d);
+
+        List<Book> bookList = bookStoreService.getBooksAll();
+        MultiValueMap<String, String> multiValueMapOrders = new LinkedMultiValueMap<>();
+        multiValueMapOrders.add("orders", "999");
+
+        MultiValueMap<String, String> multiValueMapLogin = new LinkedMultiValueMap<>();
+        multiValueMapLogin.add("username", "john.doe");
+        multiValueMapLogin.add("password", "thisismysecret");
+        mvc.perform(post("/login").params(multiValueMapLogin))
+                .andExpect(status().isOk())
+                .andDo(
+                        result ->  mvc.perform(post("/users/orders").params(multiValueMapOrders).sessionAttrs(sessionAttrs))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(Matchers.equalTo(new Gson().toJson(map))))
                 );
     }
 }

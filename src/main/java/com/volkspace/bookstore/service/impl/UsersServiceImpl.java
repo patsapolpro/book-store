@@ -41,4 +41,14 @@ public class UsersServiceImpl implements UsersService {
         return optionalUsers.isPresent() ? optionalUsers.get() : null;
     }
 
+    @Override
+    public void deleteById(Integer id) {
+        usersRepository.deleteById(id);
+    }
+
+    @Override
+    public Users findByUsername(String username) {
+        return usersRepository.findByUsername(username);
+    }
+
 }
