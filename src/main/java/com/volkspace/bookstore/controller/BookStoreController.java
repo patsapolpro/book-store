@@ -3,6 +3,7 @@ package com.volkspace.bookstore.controller;
 import com.volkspace.bookstore.model.Book;
 import com.volkspace.bookstore.model.Books;
 import com.volkspace.bookstore.service.BookStoreService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ public class BookStoreController {
     @Qualifier("databaseBookStoreService")
     private BookStoreService bookStoreService;
 
+    @ApiOperation(value = "Get Books", notes = "Get List of Book")
     @GetMapping("/books")
     public Books getBooks() {
         Books books = new Books();

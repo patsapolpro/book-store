@@ -8,6 +8,8 @@ import com.volkspace.bookstore.service.BookStoreService;
 import com.volkspace.bookstore.service.OrdersService;
 import com.volkspace.bookstore.service.UsersService;
 import com.volkspace.bookstore.util.BookStoreUtil;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,10 +34,11 @@ public class UsersController {
     @Autowired
     private OrdersService ordersService;
 
+    @ApiOperation(value = "Create Users", notes = "Create Users By Username and Password")
     @PostMapping("/users")
-    public String createUsers(@RequestParam String username,
-                              @RequestParam String password,
-                              @RequestParam("date_of_birth") String dateOfBirth) {
+    public String createUsers(@ApiParam(value = "username", required = true) @RequestParam String username,
+                              @ApiParam(value = "password", required = true) @RequestParam String password,
+                              @ApiParam(value = "dateOfBirth") @RequestParam("date_of_birth") String dateOfBirth) {
         String result;
         try {
             String passwordHex = DigestUtils.sha256Hex(password);
@@ -46,7 +49,7 @@ public class UsersController {
             users.setPassword(passwordHex);
             users.setName(nameSplit[0] != null ? nameSplit[0] : "");
             users.setSurname(nameSplit[1] != null ? nameSplit[1] : "");
-            users.setDateOfBirthDay(BookStoreUtil.parseDate(dateOfBirth));
+            users.setDateOfBirthDay(dateOfBirth != null ? BookStoreUtil.parseDate(dateOfBirth) : null);
             usersService.save(users);
             result = BookStoreUtil.MESSAGE_SUCCESS;
         } catch (Exception e) {
@@ -55,6 +58,7 @@ public class UsersController {
         return result;
     }
 
+    @ApiOperation(value = "Get Users", notes = "Get Users store in session")
     @GetMapping("/users")
     public String getUsers(HttpServletRequest request){
         Integer userlogin = (Integer) request.getSession().getAttribute(BookStoreUtil.SESSION_USER_ID);
@@ -75,6 +79,7 @@ public class UsersController {
         return null;
     }
 
+    @ApiOperation(value = "Delete Users", notes = "Delete all Users")
     @DeleteMapping("/users")
     public void deleteUsers(HttpServletRequest request) {
         usersService.deleteAll();
@@ -82,9 +87,10 @@ public class UsersController {
         request.getSession().removeAttribute(BookStoreUtil.SESSION_USER_ID);
     }
 
+    @ApiOperation(value = "Create Order By Users", notes = "Orders book by Users")
     @PostMapping("/users/orders")
     public String ordersByUser(HttpServletRequest request,
-                              @RequestParam("orders") List<Integer> ordersIdList) {
+                               @ApiParam(value = "orders", required = true) @RequestParam("orders") List<Integer> ordersIdList) {
         Integer userlogin = (Integer) request.getSession().getAttribute(BookStoreUtil.SESSION_USER_ID);
         Users users = usersService.findById(userlogin);
         if(users != null) {
