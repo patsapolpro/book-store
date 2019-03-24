@@ -47,4 +47,9 @@ public class BookStoreSynchronizer {
             bookStoreRepository.save(book);
         }
     }
+
+    @Transactional
+    public void forceDelete() {
+        bookStoreRepository.deleteAll();
+    }
 }

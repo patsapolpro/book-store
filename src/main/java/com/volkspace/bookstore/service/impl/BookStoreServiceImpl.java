@@ -34,6 +34,19 @@ public class BookStoreServiceImpl implements BookStoreService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Book findById(Integer id) {
+        Map<Integer, BookData> mapBook = createMapBook(bookExternalService.fetchAll());
+        Map<Integer, BookData> mapBookRecommendation = createMapBook(bookExternalService.fetchRecommendation());
+
+        Book book = new Book();
+        BookData bookData = mapBook.get(id);
+        if(bookData != null){
+            book = createBook(mapBookRecommendation, bookData);
+        }
+        return book;
+    }
+
     private Book createBook(Map<Integer, BookData> mapBookRecommendation, BookData bookData) {
         Book book = new Book();
         book.setId(bookData.getId());

@@ -24,13 +24,14 @@ public class LoginControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        mvc.perform(delete("/users"));
-
         MultiValueMap<String, String> multiValueMapUser = new LinkedMultiValueMap<>();
         multiValueMapUser.add("username", "john.doe");
         multiValueMapUser.add("password", "thisismysecret");
         multiValueMapUser.add("date_of_birth", "15/01/1985");
-        mvc.perform(post("/users").params(multiValueMapUser));
+        mvc.perform(delete("/users"))
+                .andDo(
+                    result ->       mvc.perform(post("/users").params(multiValueMapUser))
+                );
     }
 
     @Test

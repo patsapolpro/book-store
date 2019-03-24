@@ -1,10 +1,8 @@
 package com.volkspace.bookstore.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Users {
@@ -16,6 +14,9 @@ public class Users {
     private String name;
     private String surname;
     private Date dateOfBirthDay;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "users")
+    @ElementCollection
+    private List<Orders> orders;
 
     public Integer getId() {
         return id;
@@ -63,5 +64,13 @@ public class Users {
 
     public void setDateOfBirthDay(Date dateOfBirthDay) {
         this.dateOfBirthDay = dateOfBirthDay;
+    }
+
+    public List<Orders> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Orders> orders) {
+        this.orders = orders;
     }
 }

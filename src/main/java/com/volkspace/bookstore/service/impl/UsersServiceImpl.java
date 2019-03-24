@@ -6,6 +6,7 @@ import com.volkspace.bookstore.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,11 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public List<Users> findAll() {
+        return usersRepository.findAll();
+    }
+
+    @Override
     public Users findByUsernameAndPassword(String username, String passwordHex) {
         return usersRepository.findByUsernameAndPassword(username, passwordHex);
     }
@@ -27,6 +33,12 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public void deleteAll() {
         usersRepository.deleteAll();
+    }
+
+    @Override
+    public Users findById(Integer id) {
+        Optional<Users> optionalUsers = usersRepository.findById(id);
+        return optionalUsers.isPresent() ? optionalUsers.get() : null;
     }
 
 }

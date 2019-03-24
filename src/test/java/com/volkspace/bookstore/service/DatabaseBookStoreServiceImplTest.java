@@ -27,6 +27,7 @@ public class DatabaseBookStoreServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
+        bookStoreSynchronizer.forceDelete();
         bookStoreSynchronizer.forceSync();
     }
 

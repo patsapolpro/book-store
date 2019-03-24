@@ -30,6 +30,7 @@ public class BookStoreControllerTest {
 
 	@Before
 	public void setUp() throws Exception {
+		bookStoreSynchronizer.forceDelete();
 		bookStoreSynchronizer.forceSync();
 	}
 
