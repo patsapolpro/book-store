@@ -1,5 +1,6 @@
 package com.volkspace.bookstore;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +18,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
-public class UsersControllerTest {
-
+public class LoginControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Test
-    public void testCreateUsers() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        mvc.perform(delete("/users"));
+
         MultiValueMap<String, String> multiValueMapUser = new LinkedMultiValueMap<>();
         multiValueMapUser.add("username", "john.doe");
         multiValueMapUser.add("password", "thisismysecret");
         multiValueMapUser.add("date_of_birth", "15/01/1985");
-        mvc.perform(post("/users").params(multiValueMapUser))
+        mvc.perform(post("/users").params(multiValueMapUser));
+    }
+
+    @Test
+    public void loginWithRestApiWithExistUsers() throws Exception {
+        MultiValueMap<String, String> multiValueMapLogin = new LinkedMultiValueMap<>();
+        multiValueMapLogin.add("username", "john.doe");
+        multiValueMapLogin.add("password", "thisismysecret");
+        mvc.perform(post("/login").params(multiValueMapLogin))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void testDeleteUsers() throws Exception {
-        mvc.perform(delete("/users"))
-            .andExpect(status().isOk());
+    public void loginWithRestApiWithOutExistUsers() throws Exception {
+        MultiValueMap<String, String> multiValueMapLogin = new LinkedMultiValueMap<>();
+        multiValueMapLogin.add("username", "john.doe2");
+        multiValueMapLogin.add("password", "thisismysecret2");
+        mvc.perform(post("/login").params(multiValueMapLogin))
+                .andExpect(status().isNotFound());
     }
 }

@@ -6,6 +6,8 @@ import com.volkspace.bookstore.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UsersServiceImpl implements UsersService {
 
@@ -16,4 +18,15 @@ public class UsersServiceImpl implements UsersService {
     public void save(Users users) {
         usersRepository.save(users);
     }
+
+    @Override
+    public Users findByUsernameAndPassword(String username, String passwordHex) {
+        return usersRepository.findByUsernameAndPassword(username, passwordHex);
+    }
+
+    @Override
+    public void deleteAll() {
+        usersRepository.deleteAll();
+    }
+
 }

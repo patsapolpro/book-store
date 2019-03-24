@@ -9,6 +9,8 @@ public class BookStoreUtil {
 
     public static final SimpleDateFormat sf = new SimpleDateFormat(DATE_FORMAT);
 
+    public static final String SESSION_USER_ID = "userlogin";
+
     public static final String MESSAGE_SUCCESS = "SUCCESS";
     public static final String MESSAGE_FAIL = "FAIL";
 
